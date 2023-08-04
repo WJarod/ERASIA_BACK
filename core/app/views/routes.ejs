@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Routes</title>
+    <!-- Ajouter le lien CDN Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Ajouter une couleur de fond pour les sections de modèle */
+        .model-section {
+            background-color: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Ajouter un style pour les badges en fonction de la méthode */
+        .badge {
+            font-size: 14px;
+            font-weight: normal;
+            padding: 6px 8px;
+            border-radius: 4px;
+            margin-right: 5px;
+        }
+
+        .badge.GET {
+            background-color: #28a745;
+            color: #ffffff;
+        }
+
+        .badge.POST {
+            background-color: #0095ff;
+            color: #ffffff;
+        }
+
+        .badge.PUT {
+            background-color: #17a2b8;
+            color: #ffffff;
+        }
+
+        .badge.DELETE {
+            background-color: #dc3545;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h3 class="mb-3">Routes</h3>
+        <% const routesByModel = {}; %>
+        <% for (const route of generatedRoutesList) { %>
+            <% const { model, method, path } = route; %>
+            <% if (!routesByModel[model]) { %>
+                <% routesByModel[model] = []; %>
+            <% } %>
+            <% routesByModel[model].push({ method, path }); %>
+        <% } %>
+        <% for (const model in routesByModel) { %>
+            <div class="model-section">
+                <h4>Model: <%= model %></h4>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Route</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <% for (const route of routesByModel[model]) { %>
+                    <tr>
+                        <td>
+                            <!-- Utiliser une classe de badge pour afficher la méthode avec une couleur de fond correspondante -->
+                            <span class="badge <%= route.method %>"><%= route.method %></span>
+                        </td>
+                        <td>
+                            <%= route.path %>
+                        </td>
+                    </tr>
+                <% } %>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
+</body>
+</html>
