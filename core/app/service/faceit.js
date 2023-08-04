@@ -123,7 +123,7 @@ const faceit = {
 
             stats["headshots %"] = Math.round((stats.headshots / stats.kills) * 100);
             stats["K/D Ratio"] = (stats.kills / stats.deaths).toFixed(2);
-            stats["K/R Ratio"] = (stats.kills + stats.assists) / stats.deaths;
+            stats["K/R Ratio"] = ((stats.kills + stats.assists) / stats.deaths).toFixed(2);
             stats.wins = stats.wins;
             stats.losses = matchStatsPlayer.length - stats.wins;
             
