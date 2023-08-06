@@ -80,7 +80,7 @@ const faceit = {
     getWeekStats: async (player_id) => {
         const start = Math.floor((Date.now() - 604800000) / 1000);
         const end = Math.floor(Date.now() / 1000);
-        const url = `https://open.faceit.com/data/v4/players/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=20`;
+        const url = `https://open.faceit.com/data/v4/players/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=50`;
         const config = faceitConfig;
         try {
             const matchResponse = await axios.get(url, config);
