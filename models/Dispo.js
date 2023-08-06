@@ -25,6 +25,23 @@ Dispo.businessLogic = {
       }
     },
   },
+  //get by user and week
+  findByUserAndWeek: {
+    route: "/findByUserAndWeek/:user/:week",
+    method: "get",
+    handler: async (req, res, next) => {
+      try {
+        const dispo = await Dispo.findOne({
+          user: req.params.user,
+          week: req.params.week
+        });
+        res.json(dispo);
+      }
+      catch (err) {
+        next(err);
+      }
+    }
+  },
 };
 
 export default Dispo;
