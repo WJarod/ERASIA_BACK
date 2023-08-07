@@ -175,6 +175,7 @@ const faceit = {
           stats.tripleKills += parseInt(match["Triple Kills"]);
           stats.quadroKills += parseInt(match["Quadro Kills"]);
           stats.pentaKills += parseInt(match["Penta Kills"]);
+          stats.rating += parseFloat(match.Rating);
         }
       });
 
@@ -188,24 +189,7 @@ const faceit = {
       stats.losses = matchStatsPlayer.length - stats.wins;
         
       // calcul du rating
-      const kills = stats.kills;
-      const deaths = stats.deaths;
-      const assists = stats.assists;
-      const headshots = stats.headshots;
-      const mvps = stats.mvps;
-      const tripleKills = stats.tripleKills;
-      const quadroKills = stats.quadroKills;
-      const pentaKills = stats.pentaKills;
-      const rounds = stats.wins + stats.losses;
-      const winRate = stats.wins / rounds;
-      const headshotsRate = headshots / kills;
-      const kpr = kills / rounds;
-      const dpr = deaths / rounds;
-      const kdr = kills / deaths;
-      const adr = (kills + assists) / rounds;
-      const mvpr = mvps / rounds;
-      const tripleKillsRate = tripleKills / rounds;
-      const quadroKillsRate = quadroKills / rounds;
+      
 
 
       return stats;
