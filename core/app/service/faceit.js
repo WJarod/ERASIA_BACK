@@ -187,7 +187,7 @@ const faceit = {
       ).toFixed(2);
       stats.wins = stats.wins;
       stats.losses = matchStatsPlayer.length - stats.wins;
-      stats.rating = (stats.rating / matchStatsPlayer.length).toFixed(2);
+      stats.rating = ((stats.rating / matchStatsPlayer.length)+4).toFixed(2);
 
       return stats;
     } catch (err) {
