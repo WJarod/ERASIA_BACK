@@ -6,7 +6,8 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   faceit_id: { type: String, required: false, unique: true },
   profile_url: { type: String, required: false },
-  avatar_url: { type: String, required: false, default: "https://distribution.faceit-cdn.net/images/237cfade-ec10-41a9-b173-faa5dcdabe9d.jpeg" }
+  avatar_url: { type: String, required: false, default: "https://distribution.faceit-cdn.net/images/237cfade-ec10-41a9-b173-faa5dcdabe9d.jpeg" },
+  cs_role: { type: String, required: false, },
 });
 
 // Méthode pre-save pour hasher le mot de passe avant de l'enregistrer dans la base de données
