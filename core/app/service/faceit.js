@@ -44,35 +44,71 @@ const faceit = {
       log.error(err);
     }
   },
-
+   
   getMatchStatsPlayer: async (match_id, player_id) => {
     const url = `https://open.faceit.com/data/v4/matches/${match_id}/stats`;
     const config = faceitConfig;
     try {
       const response = await axios.get(url, config);
       const matchData = response.data;
-
+  
       // Trouver le joueur avec le player_id spécifié dans les rounds du match
       const playerRound = matchData.rounds.find((round) =>
         round.teams.some((team) =>
           team.players.some((player) => player.player_id === player_id)
         )
       );
-
+  
       if (!playerRound) {
         console.log("Le joueur n'a pas participé à ce match.");
         return null;
       }
-
+  
+      // Recuperer le nombre de rounds joués dans le match
+      const roundsPlayed = playerRound.round_stats.Rounds;
+  
       // Trouver le joueur dans l'équipe du match
       const playerTeam = playerRound.teams.find((team) =>
         team.players.some((player) => player.player_id === player_id)
       );
-
+  
       // Trouver les statistiques du joueur dans l'équipe
       const playerStats = playerTeam.players.find(
         (player) => player.player_id === player_id
       ).player_stats;
+  
+      // Ajouter la propriété roundsPlayed aux statistiques du joueur
+      playerStats.RoundsPlayed = roundsPlayed;
+
+      //Kills Rating (Kills/Rounds)/0.679
+      playerStats.KillRating = ((playerStats.Kills / playerStats.RoundsPlayed) / 0.679);
+
+      //survival rating ((Rounds-Deaths)/Rounds)/0.317
+      playerStats.SurvivalRating = ((playerStats.RoundsPlayed - playerStats.Deaths) / playerStats.RoundsPlayed) / 0.317;
+
+      //Multikill Rating ((1K+(4*2K)+(9*3K)+(16*4K)+ (25*5K))/Rounds)/1.277
+
+      var multiplicateur;
+      
+      if (playerStats["K/R Ratio"] < 0.5) {
+        multiplicateur = 1.70;
+      }else if (playerStats["K/R Ratio"] < 0.75) {
+        multiplicateur = 1.50;
+      } else if (playerStats["K/R Ratio"] < 1) {
+        multiplicateur = 1.20;
+      } else if (playerStats["K/R Ratio"] < 1.25) {
+        multiplicateur = 1.1;
+      } else if (playerStats["K/R Ratio"] < 1.5) {
+        multiplicateur = 1.05;
+      } 
+
+      playerStats.MultikillRating = (((playerStats.Kills * multiplicateur) + (9 * playerStats["Triple Kills"]) + (16 * playerStats["Quadro Kills"]) + (25 * playerStats["Penta Kills"])) / playerStats.RoundsPlayed) / 1.277;
+
+      // Combining the Variables (KillRating+(0.7*SurvivalRating) +MultikillRating)/2.7
+      playerStats.CombinedRating = (playerStats.KillRating + (0.7 * playerStats.SurvivalRating) + playerStats.MultikillRating) / 2.7;
+      
+      // string to number
+      playerStats.Rating = parseFloat(playerStats.CombinedRating.toFixed(2));
 
       return playerStats;
     } catch (err) {
@@ -118,13 +154,14 @@ const faceit = {
         deaths: 0,
         assists: 0,
         headshots: 0,
-        "headshots %": 0,
-        "K/D Ratio": 0,
-        "K/R Ratio": 0,
+        "headshots %": 0,// Headshots per kill %
+        "K/D Ratio": 0,// Kills per death
+        "K/R Ratio": 0,// Kills per round
         mvps: 0,
         tripleKills: 0,
         quadroKills: 0,
         pentaKills: 0,
+        rating: 0,
       };
 
       matchStatsPlayer.forEach((match) => {
@@ -149,6 +186,27 @@ const faceit = {
       ).toFixed(2);
       stats.wins = stats.wins;
       stats.losses = matchStatsPlayer.length - stats.wins;
+        
+      // calcul du rating
+      const kills = stats.kills;
+      const deaths = stats.deaths;
+      const assists = stats.assists;
+      const headshots = stats.headshots;
+      const mvps = stats.mvps;
+      const tripleKills = stats.tripleKills;
+      const quadroKills = stats.quadroKills;
+      const pentaKills = stats.pentaKills;
+      const rounds = stats.wins + stats.losses;
+      const winRate = stats.wins / rounds;
+      const headshotsRate = headshots / kills;
+      const kpr = kills / rounds;
+      const dpr = deaths / rounds;
+      const kdr = kills / deaths;
+      const adr = (kills + assists) / rounds;
+      const mvpr = mvps / rounds;
+      const tripleKillsRate = tripleKills / rounds;
+      const quadroKillsRate = quadroKills / rounds;
+
 
       return stats;
     } catch (err) {
