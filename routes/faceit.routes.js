@@ -39,10 +39,10 @@ router.route("/week-stats/:player_id").get(async (req, res, next) => {
     }
 });
 
-router.route("/team-stats").get(async (req, res, next) => {
+router.route("/week-stats-graph/:player_id").get(async (req, res, next) => {
     try {
-        const teamMatch = await faceit.getTeamStats();
-        res.json(teamMatch);
+        const weekStatsGraph = await faceit.getWeekStatsGraph(req.params.player_id);
+        res.json(weekStatsGraph);
     } catch (err) {
         next(err);
     }
