@@ -106,8 +106,10 @@ const faceit = {
       // string to number
       playerStats.Rating = parseFloat(playerStats.CombinedRating.toFixed(2));
 
+      mapplayed = mapplayed.substring(3);
+
       // Add the map played with score 
-      playerStats.Map = (mapplayed + " " + score);
+      playerStats.Map = (mapplayed + "-" + score);
 
       return playerStats;
     } catch (err) {
@@ -224,7 +226,8 @@ const faceit = {
           faceit.getMatchStatsPlayer(matchId, player_id)
         )
       );
-
+      
+      matchStatsPlayer.reverse();
       return matchStatsPlayer;
     } catch (err) {
       log.error(err);
