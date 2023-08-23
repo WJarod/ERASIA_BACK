@@ -61,7 +61,20 @@ const faceit = {
 
       var mapplayed = playerRound.round_stats.Map;
 
-      const score = playerRound.round_stats.Score;
+      var winner = playerRound.round_stats.Winner;
+
+      // find the team of the player
+      const playeurTeamId = playerRound.teams.find((team) =>
+        team.players.some((player) => player.player_id === player_id)
+      ).team_id;
+
+      var message = " ";
+
+      if (winner == playeurTeamId) {
+        message = "Win";
+      } else {
+        message = "Lose";
+      }
   
       // Trouver le joueur dans l'équipe du match
       const playerTeam = playerRound.teams.find((team) =>
@@ -109,7 +122,7 @@ const faceit = {
       mapplayed = mapplayed.substring(3);
 
       // Add the map played with score 
-      playerStats.Map = (mapplayed + "-" + score);
+      playerStats.Map = (mapplayed + "-" + message);
 
       return playerStats;
     } catch (err) {
