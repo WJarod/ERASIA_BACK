@@ -71,9 +71,9 @@ const faceit = {
       var message = " ";
 
       if (winner == playeurTeamId) {
-        message = "Win";
+        message = "win";
       } else {
-        message = "Lose";
+        message = "lose";
       }
   
       // Trouver le joueur dans l'équipe du match
