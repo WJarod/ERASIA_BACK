@@ -59,7 +59,7 @@ const faceit = {
       // Recuperer le nombre de rounds joués dans le match
       const roundsPlayed = playerRound.round_stats.Rounds;
 
-      const mapplayed = playerRound.round_stats.Map;
+      var mapplayed = playerRound.round_stats.Map;
 
       const score = playerRound.round_stats.Score;
   
