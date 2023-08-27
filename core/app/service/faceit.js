@@ -132,21 +132,27 @@ const faceit = {
   },
 
   getWeekStats: async (player_id) => {
-    // Get the current date
-    const currentDate = new Date();
-    // Calculate the start of the current week (Monday)
-    const startOfWeek = new Date(currentDate);
-    startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // Set to Monday
-    startOfWeek.setHours(0, 0, 0, 0); // Set to start of day
+    const today = new Date();
+    function getFirstDayOfWeek(d) {
+      const date = new Date(d);
+      const day = date.getDay();
 
-    // Calculate the end of the current week (Sunday)
-    const endOfWeek = new Date(currentDate);
-    endOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 7); // Set to Sunday
-    endOfWeek.setHours(23, 59, 59, 999); // Set to end of day
+      const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+
+      return new Date(date.setDate(diff));
+    }
+
+    const firstDay = getFirstDayOfWeek(today);
+
+    const lastDay = new Date(firstDay);
+    lastDay.setDate(lastDay.getDate() + 6);
+
+    firstDay.setHours(0, 0, 0, 0);
+    lastDay.setHours(23, 59, 59, 999);
 
     // Convert the dates to Unix timestamps (seconds since epoch)
-    const start = Math.floor(startOfWeek.getTime() / 1000);
-    const end = Math.floor(endOfWeek.getTime() / 1000);
+    const start = Math.floor(firstDay.getTime() / 1000);
+    const end = Math.floor(lastDay.getTime() / 1000);
 
     const url = `https://open.faceit.com/data/v4/players/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=50`;
     const config = faceitConfig;
@@ -211,21 +217,27 @@ const faceit = {
 
   //match stats for graph
   getWeekStatsGraph: async (player_id) => {
-    // Get the current date
-    const currentDate = new Date();
-    // Calculate the start of the current week (Monday)
-    const startOfWeek = new Date(currentDate);
-    startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // Set to Monday
-    startOfWeek.setHours(0, 0, 0, 0); // Set to start of day
+    const today = new Date();
+    function getFirstDayOfWeek(d) {
+      const date = new Date(d);
+      const day = date.getDay();
 
-    // Calculate the end of the current week (Sunday)
-    const endOfWeek = new Date(currentDate);
-    endOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 7); // Set to Sunday
-    endOfWeek.setHours(23, 59, 59, 999); // Set to end of day
+      const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+
+      return new Date(date.setDate(diff));
+    }
+
+    const firstDay = getFirstDayOfWeek(today);
+
+    const lastDay = new Date(firstDay);
+    lastDay.setDate(lastDay.getDate() + 6);
+
+    firstDay.setHours(0, 0, 0, 0);
+    lastDay.setHours(23, 59, 59, 999);
 
     // Convert the dates to Unix timestamps (seconds since epoch)
-    const start = Math.floor(startOfWeek.getTime() / 1000);
-    const end = Math.floor(endOfWeek.getTime() / 1000);
+    const start = Math.floor(firstDay.getTime() / 1000);
+    const end = Math.floor(lastDay.getTime() / 1000);
 
     const url = `https://open.faceit.com/data/v4/players/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=50`;
     const config = faceitConfig;
