@@ -235,12 +235,81 @@ const faceit = {
     firstDay.setHours(0, 0, 0, 0);
     lastDay.setHours(23, 59, 59, 999);
 
+    //get last 14 days
+    const last14Days = new Date(firstDay);
+    last14Days.setDate(last14Days.getDate() - 14);
+
     // Convert the dates to Unix timestamps (seconds since epoch)
-    const start = Math.floor(firstDay.getTime() / 1000);
+    const start = Math.floor(last14Days.getTime() / 1000);
     const end = Math.floor(lastDay.getTime() / 1000);
 
     const url = `https://open.faceit.com/data/v4/players/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=50`;
     const config = faceitConfig;
+
+    //function pour savoir combien de game j'ai jouer sur une map 
+    var mapplayed = [
+      { map: "dust2", played: 0, win: 0, lose: 0 },
+      { map: "inferno", played: 0, win: 0, lose: 0 },
+      { map: "mirage", played: 0, win: 0, lose: 0 },
+      { map: "nuke", played: 0, win: 0, lose: 0 },
+      { map: "overpass", played: 0, win: 0, lose: 0 },
+      { map: "anubis", played: 0, win: 0, lose: 0 },
+      { map: "vertigo", played: 0, win: 0, lose: 0 },
+      { map: "ancient", played: 0, win: 0, lose: 0 },
+    ];
+
+    // function pour savoir combien de game j'ai jouer sur une map attention apres le nom de la map il y a un -win ou -lose
+    function mapplayedfunction(map) {
+      if (map == "dust2-win") {
+        mapplayed[0].played += 1;
+        mapplayed[0].win += 1;
+      } else if (map == "dust2-lose") {
+        mapplayed[0].played += 1;
+        mapplayed[0].lose += 1;
+      } else if (map == "inferno-win") {
+        mapplayed[1].played += 1;
+        mapplayed[1].win += 1;
+      } else if (map == "inferno-lose") {
+        mapplayed[1].played += 1;
+        mapplayed[1].lose += 1;
+      } else if (map == "mirage-win") {
+        mapplayed[2].played += 1;
+        mapplayed[2].win += 1;
+      } else if (map == "mirage-lose") {
+        mapplayed[2].played += 1;
+        mapplayed[2].lose += 1;
+      } else if (map == "nuke-win") {
+        mapplayed[3].played += 1;
+        mapplayed[3].win += 1;
+      } else if (map == "nuke-lose") {
+        mapplayed[3].played += 1;
+        mapplayed[3].lose += 1;
+      } else if (map == "overpass-win") {
+        mapplayed[4].played += 1;
+        mapplayed[4].win += 1;
+      } else if (map == "overpass-lose") {
+        mapplayed[4].played += 1;
+        mapplayed[4].lose += 1;
+      } else if (map == "anubis-win") {
+        mapplayed[5].played += 1;
+        mapplayed[5].win += 1;
+      } else if (map == "anubis-lose") {
+        mapplayed[5].played += 1;
+        mapplayed[5].lose += 1;
+      } else if (map == "vertigo-win") {
+        mapplayed[6].played += 1;
+        mapplayed[6].win += 1;
+      } else if (map == "vertigo-lose") {
+        mapplayed[6].played += 1;
+        mapplayed[6].lose += 1;
+      } else if (map == "ancient-win") {
+        mapplayed[7].played += 1;
+        mapplayed[7].win += 1;
+      } else if (map == "ancient-lose") {
+        mapplayed[7].played += 1;
+        mapplayed[7].lose += 1;
+      }
+    }
 
     try {
       const matchResponse = await axios.get(url, config);
@@ -251,9 +320,19 @@ const faceit = {
           faceit.getMatchStatsPlayer(matchId, player_id)
         )
       );
-      
       matchStatsPlayer.reverse();
-      return matchStatsPlayer;
+      matchStatsPlayer.forEach((match) => {
+        if (match) {
+          mapplayedfunction(match.Map);
+        }
+      });
+      mapplayed.sort(function (a, b) {
+        return b.played - a.played;
+      });
+      return {
+        mapplayed: mapplayed,
+        matchStatsPlayer: matchStatsPlayer,
+      };
     } catch (err) {
       log.error(err);
       return null;
