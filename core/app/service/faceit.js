@@ -240,7 +240,7 @@ const faceit = {
     last14Days.setDate(last14Days.getDate() - 14);
 
     // Convert the dates to Unix timestamps (seconds since epoch)
-    const start = Math.floor(last14Days.getTime() / 1000);
+    const start = Math.floor(firstDay.getTime() / 1000);
     const end = Math.floor(lastDay.getTime() / 1000);
 
     const url = `https://open.faceit.com/data/v4/players/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=50`;
