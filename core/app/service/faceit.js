@@ -119,6 +119,9 @@ const faceit = {
       // string to number
       playerStats.Rating = parseFloat(playerStats.CombinedRating.toFixed(2));
 
+      //add 0.04 to rating
+      playerStats.Rating = playerStats.Rating + 0.04;
+
       mapplayed = mapplayed.substring(3);
 
       // Add the map played with score 
