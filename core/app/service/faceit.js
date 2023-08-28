@@ -321,13 +321,17 @@ const faceit = {
       //check how many elo to up rank 
       const eloToUp = (faceitLevel[response.data.games.csgo.skill_level].max - response.data.games.csgo.faceit_elo) + 1;
 
+      //change {language} to fr https://www.faceit.com/{lang}/players/WNova
+      const faceitUrl = response.data.faceit_url;
+      const faceitUrlFr = faceitUrl.replace("{lang}", "fr");
+
       //custom data
       const playeurData = {
         nickname: response.data.nickname,
         level: response.data.games.csgo.skill_level,
         elo: response.data.games.csgo.faceit_elo,
         eloToUp: eloToUp,
-        faceitUrl: response.data.faceit_url,
+        faceitUrl: faceitUrlFr,
       }
 
       return playeurData;
