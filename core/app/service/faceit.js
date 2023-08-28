@@ -260,6 +260,82 @@ const faceit = {
     }
   },
 
+  getPlayer: async (player_id) => {
+    const url = `https://open.faceit.com/data/v4/players/${player_id}`;
+    const config = faceitConfig;
+    try {
+      const response = await axios.get(url, config);
+
+      const faceitLevel = {
+        1: {
+          rank: "1",
+          min: 0,
+          max: 800,
+        },
+        2: {
+          rank: "2",
+          min: 801,
+          max: 950,
+        },
+        3: {
+          rank: "3",
+          min: 951,
+          max: 1100,
+        },
+        4: {
+          rank: "4",
+          min: 1101,
+          max: 1250,
+        },
+        5: {
+          rank: "5",
+          min: 1251,
+          max: 1400,
+        },
+        6: {
+          rank: "6",
+          min: 1401,
+          max: 1550,
+        },
+        7: {
+          rank: "7",
+          min: 1551,
+          max: 1700,
+        },
+        8: {
+          rank: "8",
+          min: 1701,
+          max: 1850,
+        },
+        9: {
+          rank: "9",
+          min: 1851,
+          max: 2000,
+        },
+        10: {
+          rank: "10",
+          min: 2001,
+          max: 2150,
+        }
+      }
+      //check how many elo to up rank 
+      const eloToUp = (faceitLevel[response.data.games.csgo.skill_level].max - response.data.games.csgo.faceit_elo) + 1;
+
+      //custom data
+      const playeurData = {
+        nickname: response.data.nickname,
+        level: response.data.games.csgo.skill_level,
+        elo: response.data.games.csgo.faceit_elo,
+        eloToUp: eloToUp,
+        faceitUrl: response.data.faceit_url,
+      }
+
+      return playeurData;
+    } catch (err) {
+      log.error(err);
+    }
+  }
+
 };
 
 export default faceit;

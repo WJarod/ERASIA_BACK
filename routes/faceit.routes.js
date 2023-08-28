@@ -48,4 +48,13 @@ router.route("/week-stats-graph/:player_id").get(async (req, res, next) => {
     }
 });
 
+router.route("/player/:player_id").get(async (req, res, next) => {
+    try {
+        const player = await faceit.getPlayer(req.params.player_id);
+        res.json(player);
+    } catch (err) {
+        next(err);
+    }
+});
+
 export default router;
