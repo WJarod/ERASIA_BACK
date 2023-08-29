@@ -42,6 +42,24 @@ Dispo.businessLogic = {
       }
     }
   },
+
+  //edit by user and week
+  editByUserAndWeek: {
+    route: "/editByUserAndWeek/:user/:week",
+    method: "put",
+    handler: async (req, res, next) => {
+      try {
+        const dispo = await Dispo.findOneAndUpdate({
+          user: req.params.user,
+          week: req.params.week
+        }, req.body, { new: true });
+        res.json(dispo);
+      }
+      catch (err) {
+        next(err);
+      }
+    }
+  },
 };
 
 export default Dispo;
