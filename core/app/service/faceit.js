@@ -109,10 +109,24 @@ const faceit = {
         multiplicateur = 1.1;
       } else if (playerStats["K/R Ratio"] < 1.5) {
         multiplicateur = 1.05;
-      } 
+      }  else if (playerStats["K/R Ratio"] < 1.75) {
+        multiplicateur = 1;
+      } else if (playerStats["K/R Ratio"] < 2) {
+        multiplicateur = 0.95;
+      } else if (playerStats["K/R Ratio"] < 2.25) {
+        multiplicateur = 0.9;
+      } else if (playerStats["K/R Ratio"] < 2.5) {
+        multiplicateur = 0.85;
+      } else if (playerStats["K/R Ratio"] < 2.75) {
+        multiplicateur = 0.8;
+      } else if (playerStats["K/R Ratio"] < 3) {
+        multiplicateur = 0.75;
+      } else if (playerStats["K/R Ratio"] < 3.25) {
+        multiplicateur = 0.7;
+      }
 
       playerStats.MultikillRating = (((playerStats.Kills * multiplicateur) + (9 * playerStats["Triple Kills"]) + (16 * playerStats["Quadro Kills"]) + (25 * playerStats["Penta Kills"])) / playerStats.RoundsPlayed) / 1.277;
-
+      
       // Combining the Variables (KillRating+(0.7*SurvivalRating) +MultikillRating)/2.7
       playerStats.CombinedRating = (playerStats.KillRating + (0.7 * playerStats.SurvivalRating) + playerStats.MultikillRating) / 2.7;
       
