@@ -10,4 +10,20 @@ const EventSchema = new mongoose.Schema({
 
 const Event = mongoose.model("Event", EventSchema);
 
+Event.businessLogic = {
+    // delete by title
+    deleteByTitle: {
+        route: "/deleteByTitle/:title",
+        method: "delete",
+        handler: async (req, res, next) => {
+            try {
+                const event = await Event.findOneAndDelete({ title: req.params.title });
+                res.json(event);
+            } catch (err) {
+                next(err);
+            }
+        },
+    },
+};
+
 export default Event;
