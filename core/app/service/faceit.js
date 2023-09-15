@@ -467,10 +467,10 @@ const faceit = {
       player_id: player_id,
       totalGames: totalGamesPlayed,
       averages: {
-        "K/D Ratio": averageKDRatio,
-        "K/R Ratio": averageKRRatio,
+        "K/D Ratio": averageKDRatio.toFixed(2),
+        "K/R Ratio": averageKRRatio.toFixed(2),
         "Headshots %": averageHeadshotsPercentage,
-        "Rating": averageRating
+        "Rating": averageRating.toFixed(2),
       },
       sums: otherStatsSum
     };
