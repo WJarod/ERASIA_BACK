@@ -440,17 +440,19 @@ const faceit = {
     const totalGamesPlayed = userStats.matchStatsPlayer.length;
 
     for (let match of userStats.matchStatsPlayer) {
-      sumKDRatio += parseFloat(match["K/D Ratio"]) || 0;
-      sumKRRatio += parseFloat(match["K/R Ratio"]) || 0;
-      sumHeadshotsPercentage += parseFloat(match["Headshots %"]) || 0;
-      sumRating += parseFloat(match["Rating"]) || 0;
-
-      // List of stats to sum up
-      const statsToSum = ["Kills", "Deaths", "Assists", "Headshots", "RoundsPlayed", "Triple Kills", "Quadro Kills", "Penta Kills"];
-
-      for (let stat of statsToSum) {
-        if (!otherStatsSum[stat]) otherStatsSum[stat] = 0;
-        otherStatsSum[stat] += parseFloat(match[stat]) || 0;
+      if (match) { // Vérifiez si match n'est pas null ou undefined
+        sumKDRatio += parseFloat(match["K/D Ratio"]) || 0;
+        sumKRRatio += parseFloat(match["K/R Ratio"]) || 0;
+        sumHeadshotsPercentage += parseFloat(match["Headshots %"]) || 0;
+        sumRating += parseFloat(match["Rating"]) || 0;
+    
+        // List of stats to sum up
+        const statsToSum = ["Kills", "Deaths", "Assists", "Headshots", "RoundsPlayed", "Triple Kills", "Quadro Kills", "Penta Kills"];
+    
+        for (let stat of statsToSum) {
+          if (!otherStatsSum[stat]) otherStatsSum[stat] = 0;
+          otherStatsSum[stat] += parseFloat(match[stat]) || 0;
+        }
       }
     }
 
