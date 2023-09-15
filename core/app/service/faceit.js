@@ -240,18 +240,9 @@ const faceit = {
 
       return new Date(date.setDate(diff));
     }
-
-    const firstDay = getFirstDayOfWeek(today);
-
-    const lastDay = new Date(firstDay);
-    lastDay.setDate(lastDay.getDate() + 6);
-
-    firstDay.setHours(0, 0, 0, 0);
-    lastDay.setHours(23, 59, 59, 999);
-
-    //get last 14 days
-    const last14Days = new Date(firstDay);
-    last14Days.setDate(last14Days.getDate() - 14);
+    
+    const lastDay = today;
+    const firstDay = new Date("2021-08-01T00:00:00.000Z");
 
     // Convert the dates to Unix timestamps (seconds since epoch)
     const start = Math.floor(firstDay.getTime() / 1000);
