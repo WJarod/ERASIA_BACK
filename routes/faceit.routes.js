@@ -57,4 +57,13 @@ router.route("/player/:player_id").get(async (req, res, next) => {
     }
 });
 
+router.route("/player-stats/:player_id").get(async (req, res, next) => {
+    try {
+        const playerStats = await faceit.getMoyenStats(req.params.player_id);
+        res.json(playerStats);
+    } catch (err) {
+        next(err);
+    }
+});
+
 export default router;

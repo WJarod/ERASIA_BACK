@@ -4,6 +4,7 @@ import axios from "axios";
 
 dotenv.config();
 
+const FACEIT_API_URL = "https://open.faceit.com/data/v4";
 const faceitConfig = {
   headers: {
     Authorization: `Bearer ${process.env.FACEIT_API_KEY}`,
@@ -13,13 +14,10 @@ const faceitConfig = {
 const faceit = {
   api_key: process.env.FACEIT_API_KEY,
 
-  getMatches: async (player_id) => {
-    const start = Math.floor((Date.now() - 604800000) / 1000);
-    const end = Math.floor(Date.now() / 1000);
-    const url = `https://open.faceit.com/data/v4/players/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=20`;
-    const config = faceitConfig;
+  getMatches: async (player_id, start, end, limit = 20) => {
+    const url = `${FACEIT_API_URL}/players/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=${limit}`;
     try {
-      const response = await axios.get(url, config);
+      const response = await axios.get(url, faceitConfig);
       return response.data.items;
     } catch (err) {
       log.error(err);
@@ -27,35 +25,34 @@ const faceit = {
   },
 
   getMatchStats: async (match_id) => {
-    const url = `https://open.faceit.com/data/v4/matches/${match_id}/stats`;
-    const config = faceitConfig;
+    const url = `${FACEIT_API_URL}/matches/${match_id}/stats`;
     try {
-      const response = await axios.get(url, config);
+      const response = await axios.get(url, faceitConfig);
       return response.data.rounds;
     } catch (err) {
       log.error(err);
     }
   },
-   
+
   getMatchStatsPlayer: async (match_id, player_id) => {
     const url = `https://open.faceit.com/data/v4/matches/${match_id}/stats`;
     const config = faceitConfig;
     try {
       const response = await axios.get(url, config);
       const matchData = response.data;
-  
+
       // Trouver le joueur avec le player_id spécifié dans les rounds du match
       const playerRound = matchData.rounds.find((round) =>
         round.teams.some((team) =>
           team.players.some((player) => player.player_id === player_id)
         )
       );
-  
+
       if (!playerRound) {
         console.log("Le joueur n'a pas participé à ce match.");
         return null;
       }
-  
+
       // Recuperer le nombre de rounds joués dans le match
       const roundsPlayed = playerRound.round_stats.Rounds;
 
@@ -75,17 +72,17 @@ const faceit = {
       } else {
         message = "lose";
       }
-  
+
       // Trouver le joueur dans l'équipe du match
       const playerTeam = playerRound.teams.find((team) =>
         team.players.some((player) => player.player_id === player_id)
       );
-  
+
       // Trouver les statistiques du joueur dans l'équipe
       const playerStats = playerTeam.players.find(
         (player) => player.player_id === player_id
       ).player_stats;
-  
+
       // Ajouter la propriété roundsPlayed aux statistiques du joueur
       playerStats.RoundsPlayed = roundsPlayed;
 
@@ -98,10 +95,10 @@ const faceit = {
       //Multikill Rating ((1K+(4*2K)+(9*3K)+(16*4K)+ (25*5K))/Rounds)/1.277
 
       var multiplicateur;
-      
+
       if (playerStats["K/R Ratio"] < 0.5) {
         multiplicateur = 1.70;
-      }else if (playerStats["K/R Ratio"] < 0.75) {
+      } else if (playerStats["K/R Ratio"] < 0.75) {
         multiplicateur = 1.50;
       } else if (playerStats["K/R Ratio"] < 1) {
         multiplicateur = 1.20;
@@ -109,7 +106,7 @@ const faceit = {
         multiplicateur = 1.1;
       } else if (playerStats["K/R Ratio"] < 1.5) {
         multiplicateur = 1.05;
-      }  else if (playerStats["K/R Ratio"] < 1.75) {
+      } else if (playerStats["K/R Ratio"] < 1.75) {
         multiplicateur = 1;
       } else if (playerStats["K/R Ratio"] < 2) {
         multiplicateur = 0.95;
@@ -126,10 +123,10 @@ const faceit = {
       }
 
       playerStats.MultikillRating = (((playerStats.Kills * multiplicateur) + (9 * playerStats["Triple Kills"]) + (16 * playerStats["Quadro Kills"]) + (25 * playerStats["Penta Kills"])) / playerStats.RoundsPlayed) / 1.277;
-      
+
       // Combining the Variables (KillRating+(0.7*SurvivalRating) +MultikillRating)/2.7
       playerStats.CombinedRating = (playerStats.KillRating + (0.7 * playerStats.SurvivalRating) + playerStats.MultikillRating) / 2.7;
-      
+
       // string to number
       playerStats.Rating = parseFloat(playerStats.CombinedRating.toFixed(2));
 
@@ -168,7 +165,7 @@ const faceit = {
     const start = Math.floor(firstDay.getTime() / 1000);
     const end = Math.floor(lastDay.getTime() / 1000);
 
-    const url = `https://open.faceit.com/data/v4/players/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=50`;
+    const url = `${FACEIT_API_URL}/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=50`;
     const config = faceitConfig;
 
     try {
@@ -221,7 +218,7 @@ const faceit = {
       ).toFixed(2);
       stats.wins = stats.wins;
       stats.losses = matchStatsPlayer.length - stats.wins;
-      stats.rating = ((stats.rating / matchStatsPlayer.length)+0.04).toFixed(2);
+      stats.rating = ((stats.rating / matchStatsPlayer.length) + 0.04).toFixed(2);
 
       return stats;
     } catch (err) {
@@ -240,7 +237,7 @@ const faceit = {
 
       return new Date(date.setDate(diff));
     }
-    
+
     const lastDay = today;
     const firstDay = new Date("2021-08-01T00:00:00.000Z");
 
@@ -248,7 +245,7 @@ const faceit = {
     const start = Math.floor(firstDay.getTime() / 1000);
     const end = Math.floor(lastDay.getTime() / 1000);
 
-    const url = `https://open.faceit.com/data/v4/players/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=50`;
+    const url = `${FACEIT_API_URL}/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=50`;
     const config = faceitConfig;
 
     //function pour savoir combien de game j'ai jouer sur une map 
@@ -345,7 +342,7 @@ const faceit = {
   },
 
   getPlayer: async (player_id) => {
-    const url = `https://open.faceit.com/data/v4/players/${player_id}`;
+    const url = `${FACEIT_API_URL}/${player_id}`;
     const config = faceitConfig;
     try {
       const response = await axios.get(url, config);
@@ -422,7 +419,56 @@ const faceit = {
     } catch (err) {
       log.error(err);
     }
+  },
+
+  getMoyenStats: async (player_id) => {
+    const userStats = await faceit.getWeekStatsGraph(player_id);
+
+    // Variables to store the sum for the average calculations
+    let sumKDRatio = 0;
+    let sumKRRatio = 0;
+    let sumHeadshotsPercentage = 0;
+    let sumRating = 0;
+
+    // Variables to store the sum for the other stats
+    let otherStatsSum = {};
+
+    const totalGamesPlayed = userStats.matchStatsPlayer.length;
+
+    for (let match of userStats.matchStatsPlayer) {
+      sumKDRatio += parseFloat(match["K/D Ratio"]) || 0;
+      sumKRRatio += parseFloat(match["K/R Ratio"]) || 0;
+      sumHeadshotsPercentage += parseFloat(match["Headshots %"]) || 0;
+      sumRating += parseFloat(match["Rating"]) || 0;
+
+      // List of stats to sum up
+      const statsToSum = ["Kills", "Deaths", "Assists", "Headshots", "RoundsPlayed", "Triple Kills", "Quadro Kills", "Penta Kills"];
+
+      for (let stat of statsToSum) {
+        if (!otherStatsSum[stat]) otherStatsSum[stat] = 0;
+        otherStatsSum[stat] += parseFloat(match[stat]) || 0;
+      }
+    }
+
+    // Calculate the averages
+    const averageKDRatio = sumKDRatio / totalGamesPlayed;
+    const averageKRRatio = sumKRRatio / totalGamesPlayed;
+    const averageHeadshotsPercentage = sumHeadshotsPercentage / totalGamesPlayed;
+    const averageRating = sumRating / totalGamesPlayed;
+
+    return {
+      totalGames: totalGamesPlayed,
+      averages: {
+        "K/D Ratio": averageKDRatio,
+        "K/R Ratio": averageKRRatio,
+        "Headshots %": averageHeadshotsPercentage,
+        "Rating": averageRating
+      },
+      sums: otherStatsSum
+    };
   }
+
+
 
 };
 
