@@ -4,7 +4,6 @@ import axios from "axios";
 
 dotenv.config();
 
-const FACEIT_API_URL = "https://open.faceit.com/data/v4";
 const faceitConfig = {
   headers: {
     Authorization: `Bearer ${process.env.FACEIT_API_KEY}`,
@@ -14,10 +13,13 @@ const faceitConfig = {
 const faceit = {
   api_key: process.env.FACEIT_API_KEY,
 
-  getMatches: async (player_id, start, end, limit = 20) => {
-    const url = `${FACEIT_API_URL}/players/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=${limit}`;
+  getMatches: async (player_id) => {
+    const start = Math.floor((Date.now() - 604800000) / 1000);
+    const end = Math.floor(Date.now() / 1000);
+    const url = `https://open.faceit.com/data/v4/players/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=20`;
+    const config = faceitConfig;
     try {
-      const response = await axios.get(url, faceitConfig);
+      const response = await axios.get(url, config);
       return response.data.items;
     } catch (err) {
       log.error(err);
@@ -25,9 +27,10 @@ const faceit = {
   },
 
   getMatchStats: async (match_id) => {
-    const url = `${FACEIT_API_URL}/matches/${match_id}/stats`;
+    const url = `https://open.faceit.com/data/v4/matches/${match_id}/stats`;
+    const config = faceitConfig;
     try {
-      const response = await axios.get(url, faceitConfig);
+      const response = await axios.get(url, config);
       return response.data.rounds;
     } catch (err) {
       log.error(err);
@@ -165,7 +168,7 @@ const faceit = {
     const start = Math.floor(firstDay.getTime() / 1000);
     const end = Math.floor(lastDay.getTime() / 1000);
 
-    const url = `${FACEIT_API_URL}/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=50`;
+    const url = `https://open.faceit.com/data/v4/players/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=50`;
     const config = faceitConfig;
 
     try {
@@ -245,7 +248,7 @@ const faceit = {
     const start = Math.floor(firstDay.getTime() / 1000);
     const end = Math.floor(lastDay.getTime() / 1000);
 
-    const url = `${FACEIT_API_URL}/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=50`;
+    const url = `https://open.faceit.com/data/v4/players/${player_id}/history?game=csgo&from=${start}&to=${end}&offset=0&limit=50`;
     const config = faceitConfig;
 
     //function pour savoir combien de game j'ai jouer sur une map 
@@ -342,7 +345,7 @@ const faceit = {
   },
 
   getPlayer: async (player_id) => {
-    const url = `${FACEIT_API_URL}/${player_id}`;
+    const url = `https://open.faceit.com/data/v4/players/${player_id}`;
     const config = faceitConfig;
     try {
       const response = await axios.get(url, config);
@@ -453,7 +456,8 @@ const faceit = {
     // Calculate the averages
     const averageKDRatio = sumKDRatio / totalGamesPlayed;
     const averageKRRatio = sumKRRatio / totalGamesPlayed;
-    const averageHeadshotsPercentage = sumHeadshotsPercentage / totalGamesPlayed;
+    const averageHeadshotsPercentageRaw = sumHeadshotsPercentage / totalGamesPlayed;
+    const averageHeadshotsPercentage = Math.round(averageHeadshotsPercentageRaw);
     const averageRating = sumRating / totalGamesPlayed;
 
     return {
