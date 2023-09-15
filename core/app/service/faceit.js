@@ -462,6 +462,7 @@ const faceit = {
     const averageRating = sumRating / totalGamesPlayed;
 
     return {
+      player_id: player_id,
       totalGames: totalGamesPlayed,
       averages: {
         "K/D Ratio": averageKDRatio,
