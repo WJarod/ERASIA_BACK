@@ -425,6 +425,7 @@ const faceit = {
   },
 
   getMoyenStats: async (player_id) => {
+    console.log(player_id);
     const userStats = await faceit.getWeekStatsGraph(player_id);
 
     // Variables to store the sum for the average calculations
